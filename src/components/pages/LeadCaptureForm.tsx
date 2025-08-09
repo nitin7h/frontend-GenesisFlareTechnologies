@@ -30,6 +30,12 @@ export default function LeadCaptureForm() {
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Phone number must be 10 digits";
+    }
+
     if (!formData.businessType)
       newErrors.businessType = "Business type is required";
 
@@ -40,8 +46,7 @@ export default function LeadCaptureForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      // Submit logic would go here (e.g., API call)
-      console.log("Form submitted:", formData);
+      // console.log("Form submitted:", formData);
 
       setFormData({
         name: "",
@@ -66,8 +71,7 @@ export default function LeadCaptureForm() {
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
           // Axios error — safe to access error.response
-          const message =
-            error.response?.data?.message || "An unknown error occurred";
+          const message = error.response?.data?.message || "Backend Problem";
           alert(message);
         } else {
           // Not an Axios error
@@ -157,6 +161,9 @@ export default function LeadCaptureForm() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-600 dark:text-white dark:border-gray-500"
               data-lpignore="true"
             />
+            {errors.phone && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+            )}
           </div>
 
           <div>
@@ -231,5 +238,6 @@ interface FormData {
 interface FormErrors {
   name?: string;
   email?: string;
+  phone?: string;
   businessType?: string;
 }
